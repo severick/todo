@@ -4,40 +4,50 @@
     <h1 class="email">{{userEmail}}</h1>
     <b-container class="todoapp">
         <div v-if="loading">
+            
             <h1 class="loading">Loading...</h1>
         </div>
         <div v-else>
             <header class="header">
                 <b-input-group size="lg">
                     <b-input-group-prepend is-text>
-                        <b-form-checkbox class="toggle-all" type="checkbox" v-model="allDone"></b-form-checkbox>
+                        <b-form-checkbox button class="toggle-all" v-model="allDone"></b-form-checkbox>
                     </b-input-group-prepend>
                     <b-form-input class="new-todo" autofocus
                     :placeholder="this.inputPlaceholder"
-                    v-model="newTodo"
+                    v-model="newTodo.title"
                     @keyup.enter="addTodo">
                     </b-form-input>
                 </b-input-group>
             </header>
             <b-container class="main" v-show="todos.length" v-cloak>
-                <b-input-group size="lg">
-                    <b-row v-for="todo in filteredTodos"
+                <b-input-group size="lg" v-for="todo in filteredTodos" :key="todo.id">
+                    <b-input-group-prepend is-text>
+                        <b-form-checkbox class="toggle" :key="todo.id" type="checkbox" v-model="todo.completed" @change="completeTodo(todo)"></b-form-checkbox>
+                    </b-input-group-prepend>
+                    <b-form-input
                         class="todo"
                         :key="todo.id"
-                        :class="{ completed: todo.completed, editing: todo == editedTodo }">
-                        <b-col sm="12">
-                            <b-form-input v-model="todo.title" :id="`${todo.id}`"></b-form-input>
-                        </b-col>
-                    </b-row>
+                        :id="todo.title"
+                        :class="{ completed: todo.completed, editing: todo == editedTodo }" 
+                        v-model="todo.title" @dblclick="editTodo(todo)"
+                        @keyup.enter="doneEdit(todo)"
+                        @keyup.esc="cancelEdit(todo)">
+                    </b-form-input>
+                    <b-input-group-append is-text>
+                        <b-button class="destroy" type="button" @click="removeTodo(todo)"></b-button>
+                    </b-input-group-append>
                 </b-input-group>
             </b-container>
         </div>
     </b-container>
+    <datepicker v-model="newTodo.date"></datepicker>
   </b-container>
 </template>
 
 <script>
 import api from '../Api'
+import Datepicker from 'vuejs-datepicker';
 
   // visibility filters
   let filters = {
@@ -62,12 +72,18 @@ import api from '../Api'
     props: {
       activeUser: Object
     },
-    
+    components: {
+        Datepicker
+    },
     // app initial state
     data: function() {
       return {
         todos: [],
-        newTodo: '',
+        newTodo: {
+            title: '',
+            completed: false,
+            date: null,
+        },
         editedTodo: null,
         visibility: 'all',
         loading: true,
@@ -126,7 +142,7 @@ import api from '../Api'
     methods: {
 
       addTodo: function () {
-        var value = this.newTodo && this.newTodo.trim()
+        var value = this.newTodo
         if (!value) {
           return
         }
@@ -134,16 +150,18 @@ import api from '../Api'
         api.createNew(value, false).then( (response) => {
           this.$log.debug("New item created:", response);
             this.todos.push({
-          id: response.data.id,
-              title: value,
-              completed: false
+              id: response.data.id,
+              title: response.data.title,
+              completed: false,
+              date: response.data.date
             })
         }).catch((error) => {
           this.$log.debug(error);
             this.error = "Failed to add todo"
             });
 
-        this.newTodo = ''
+        this.newTodo.title = ''
+        this.newTodo.date = null
       },
 
       setVisibility: function(vis) {
@@ -151,7 +169,7 @@ import api from '../Api'
       },
 
       completeTodo (todo) {
-        api.updatedForId(todo.id, todo.title, todo.completed).then((response) => {
+        api.updateForId(todo.id, todo.title, todo.completed).then((response) => {
           this.$log.info("Item updated:", response.data);
         }).catch((error) => {
           this.$log.debug(error)

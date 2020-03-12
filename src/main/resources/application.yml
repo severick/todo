@@ -3,6 +3,6 @@ server:
 
 okta:  
   oauth2:  
-    issuer: https://dev-165129.oktapreview.com/oauth2/default  
-    clientId: a0oaj8o4nmg15v6TT10h7
+    issuer: https://dev-940686.okta.com/oauth2/default  
+    clientId: 0oa39lxogHBl6Hjnr4x6
     scope: openid profile email

@@ -5,8 +5,8 @@ import Todos from './components/Todos'
 import TodoBootstrap from './components/TodoBootstrap'
 
 Vue.use(Auth, {
-    issuer: 'https://dev-165129.oktapreview.com/oauth2/default',
-    client_id: '0oaj8o4nmg15v6TT10h7',
+    issuer: 'https://dev-940686.okta.com/oauth2/default',
+    client_id: '0oa39lxogHBl6Hjnr4x6',
     redirect_uri: window.location.origin + '/implicit/callback',
     scope: 'openid profile email'
 });

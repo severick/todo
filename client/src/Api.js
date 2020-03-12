@@ -24,8 +24,8 @@ export default {
   },  
   
   // (C)reate  
-  createNew(text, completed) {  
-    return this.execute('POST', 'todos', {title: text, completed: completed})  
+  createNew(todo, completed) {  
+    return this.execute('POST', 'todos', {title: todo.title, completed: completed, date: todo.date})  
   },  
   // (R)ead  
   getAll() {  
@@ -36,8 +36,8 @@ export default {
     })  
   },  
   // (U)pdate  
-  updateForId(id, text, completed) {  
-    return this.execute('PUT', 'todos/' + id, { title: text, completed: completed })  
+  updateForId(id, text, completed, date) {  
+    return this.execute('PUT', 'todos/' + id, { title: text, completed: completed, date: date })  
   },  
   
   // (D)elete  
