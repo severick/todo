@@ -1,0 +1,26 @@
+$web-font-path: "https://fonts.googleapis.com/css?family=Lato:400,700,400italic" !default;
+@import '_bootswatch.scss';
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+h1.title {
+    width: 100%;
+    font-size: 80px;
+    margin-bottom: 20px;
+    line-height: 80px;
+    font-weight: 100;
+    text-align: center;
+}
+
+h1.email {
+    width: 100%;
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    text-align: center;
+}
